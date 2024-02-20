@@ -12,6 +12,11 @@ import urllib3
 TOKEN = '7078028281:AAGPuTi-8fiHrkvacxD-EfmpbG6b0YJebYs'
 bot = Bot(token=TOKEN)
 
+#venv setup commandds
+#venv\scripts\activate
+#Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+#pip install python-telegram-bot --upgrade
+
 # Logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
