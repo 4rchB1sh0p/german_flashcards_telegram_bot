@@ -18,8 +18,10 @@ bot = Bot(token=TOKEN)
 #pip install python-telegram-bot --upgrade
 
 # Logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
 # GitHub Flashcards URL
 GITHUB_REPO_URL = 'https://github.com/4rchB1sh0p/german_flashcards_telegram_bot/blob/main/flashcards/'
@@ -31,7 +33,7 @@ def generate_flashcard_names():
     The list will include both .jpg and .png files from name_001 to name_300.
     """
     flashcard_names = []
-    for i in range(1, 301):  # Generates numbers from 1 to 300
+    for i in range(1, 200):  # Generates numbers from 1 to 200
         number_str = f'{i:03}'  # Formats the number as a three-digit string (001, 002, ..., 300)
         # Add both .jpg and .png filenames for each number
         flashcard_names.append(f'name_{number_str}.jpg')
@@ -50,39 +52,52 @@ def fetch_random_flashcard():
     return flashcard_url
 
 
-def send_flashcard(update: Update, context: CallbackContext):
-    """
-    Send a random flashcard to the chat.
-    """
-    flashcard_url = fetch_random_flashcard()
+""" def send_flashcard(update: Update, context: CallbackContext):
+    
+    flashcard_url2 = fetch_random_flashcard()
     chat_id = update.message.chat_id
-    bot.send_photo(chat_id=chat_id, photo=flashcard_url)
+    bot.send_photo(chat_id=chat_id, photo=flashcard_url2) """
 
-def daily_flashcard(context: CallbackContext):
+async def daily_flashcard(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Callback function for sending daily flashcard.
     """
-    job = context.job
+    #job = context.job
     flashcard_url = fetch_random_flashcard()
-    bot.send_photo(chat_id=job.context, photo=flashcard_url)
+    await context.bot.send_photo(chat_id=update.effective_chat.id,photo=flashcard_url)
+    #bot.send_photo(chat_id=job.context, photo=flashcard_url)
 
-def start(update: Update, context: CallbackContext):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Start command to schedule daily flashcards.
     """
+    # Schedule daily flashcard at 1 PM IST
+    #scheduler = BackgroundScheduler()
+    #scheduler.configure(timezone=pytz.timezone('Asia/Kolkata'))
+    #scheduler.add_job(daily_flashcard, 'cron', hour=13, minute=0,context=update.effective_chat.id)
+    #scheduler.start() 
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Scheduled daily flashcards at 1 PM IST.")
+
+""" def start2(update: Update, context: CallbackContext):
+  
+    Start command to schedule daily flashcards.
+
     chat_id = update.message.chat_id
     # Schedule daily flashcard at 1 PM IST
     scheduler = BackgroundScheduler()
     scheduler.configure(timezone=pytz.timezone('Asia/Kolkata'))
     scheduler.add_job(daily_flashcard, 'cron', hour=13, minute=0, context=chat_id)
     scheduler.start()
-    update.message.reply_text('Scheduled daily flashcards at 1 PM IST.')
+    update.message.reply_text('Scheduled daily flashcards at 1 PM IST.') """
 
-def flash_me(update: Update, context: CallbackContext):
+async def flash_me(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Command to immediately send a flashcard.
     """
-    send_flashcard(update, context)
+    flashcard_url = fetch_random_flashcard()
+    #await context.bot.send_message(chat_id=update.effective_chat.id, text=flashcard_url)
+    await context.bot.send_photo(chat_id=update.effective_chat.id,photo=flashcard_url)
+    #send_flashcard(update, context)
 
 def main():
     """
